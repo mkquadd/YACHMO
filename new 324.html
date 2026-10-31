@@ -1,0 +1,972 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0417">
+  <meta name="description" content="Heliotrope — preserving AppleInternal software and history.">
+  <title>Heliotrope — AppleInternal Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #160a2a;
+      --bg-mid: #0b0418;
+      --bg-bot: #05010a;
+      --text: #f5f0ff;
+      --text-2: #cdc3dc;
+      --muted: #9a8fb0;
+      --muted-2: #6e6486;
+      --line: rgba(168,85,247,.10);
+      --line-2: rgba(192,132,252,.24);
+      --purple: #a855f7;
+      --purple-light: #c4b5fd;
+      --purple-bright: #d8b4fe;
+      --purple-deep: #7c3aed;
+      --radius: 20px;
+      --radius-lg: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-bot);
+      /* ровные якоря под sticky nav */
+      scroll-padding-top: 90px;
+      /* не даём странице прыгать при открытии модалки */
+      scrollbar-gutter: stable;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      letter-spacing: -.008em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      background: transparent;
+      position: relative;
+    }
+
+    /* ФИКСИРОВАННЫЙ градиент — без jank при скролле */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background: linear-gradient(180deg,
+        var(--bg-top) 0%,
+        #100622 18%,
+        var(--bg-mid) 48%,
+        #07020f 82%,
+        var(--bg-bot) 100%);
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(1000px 700px at 50% -8%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(800px 600px at 88% 28%, rgba(124,58,237,.10), transparent 55%),
+        radial-gradient(900px 700px at 12% 75%, rgba(147,51,234,.08), transparent 55%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+
+    /* ============ NAV ============ */
+    .nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 16px 0;
+      pointer-events: none;
+    }
+    .nav {
+      pointer-events: auto;
+      max-width: 1024px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      height: 52px;
+      padding: 0 6px 0 16px;
+      border-radius: 16px;
+      background: rgba(24, 14, 40, .55);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--line-2);
+      box-shadow: 0 6px 24px rgba(0,0,0,.4);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; font-weight: 600; letter-spacing: -.015em;
+    }
+    .brand-mark {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, #e9d5ff 0%, #a855f7 50%, #6d28d9 100%);
+      box-shadow: 0 0 0 1px rgba(192,132,252,.2), 0 2px 8px rgba(124,58,237,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 4px; height: 14px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.9);
+      transform: rotate(30deg);
+      left: 9px; top: 4px;
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.3) 0%, transparent 55%);
+    }
+    .nav-links {
+      display: flex; align-items: center; gap: 2px;
+      font-size: 13px;
+    }
+    .nav-links a, .nav-links button {
+      padding: 7px 12px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      font-weight: 500;
+      transition: color .15s ease, background .15s ease, border-color .15s ease;
+      letter-spacing: -.005em;
+    }
+    .nav-links a:hover, .nav-links button:hover {
+      color: var(--text);
+      background: rgba(168,85,247,.12);
+    }
+    /* Contact = цвет как у "Browse library" */
+    .nav-cta {
+      background: rgba(168,85,247,.14) !important;
+      color: var(--purple-bright) !important;
+      border: 1px solid rgba(192,132,252,.32) !important;
+    }
+    .nav-cta:hover {
+      background: rgba(168,85,247,.22) !important;
+      border-color: rgba(192,132,252,.5) !important;
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      padding: 110px 20px 90px;
+      text-align: center;
+    }
+    .hero-inner { position: relative; max-width: 920px; margin: 0 auto; }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(168,85,247,.08);
+      border: 1px solid rgba(192,132,252,.2);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--purple-light);
+      letter-spacing: -.005em;
+      margin-bottom: 32px;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple-light);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    /* Заголовок — чистый белый */
+    h1 {
+      margin: 0 0 24px;
+      font-size: clamp(64px, 11vw, 128px);
+      font-weight: 700;
+      line-height: .92;
+      letter-spacing: -.055em;
+      color: #ffffff;
+    }
+    h1 .dot {
+      color: var(--purple-bright);
+    }
+
+    .hero-sub {
+      max-width: 560px;
+      margin: 0 auto 40px;
+      font-size: clamp(17px, 2vw, 21px);
+      line-height: 1.5;
+      letter-spacing: -.015em;
+      color: var(--muted);
+    }
+    .hero-sub strong { color: var(--text-2); font-weight: 500; }
+
+    /* ==== КНОПКИ: светлее ==== */
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 44px;
+      padding: 0 20px;
+      min-width: 176px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: -.005em;
+      border: 1px solid transparent;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .btn-primary {
+      background: #b45cff;
+      color: #ffffff;
+      font-weight: 600;
+    }
+    .btn-primary:hover { background: #a855f7; }
+    .btn-primary:active { background: #9333ea; }
+    .btn-secondary {
+      background: rgba(168,85,247,.14);
+      color: var(--purple-bright);
+      border-color: rgba(192,132,252,.36);
+    }
+    .btn-secondary:hover {
+      background: rgba(168,85,247,.22);
+      border-color: rgba(192,132,252,.55);
+    }
+    .btn-secondary:active { background: rgba(168,85,247,.3); }
+
+    /* ============ SECTIONS ============ */
+    section.block { padding: 80px 20px; }
+    .container { width: min(1080px, 100%); margin: 0 auto; }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .section-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--purple-light);
+      margin-bottom: 14px;
+    }
+    .section-kicker::before {
+      content: "";
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
+    }
+    .section-title {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 44px);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -.035em;
+    }
+    .section-title .muted { color: var(--muted-2); }
+    .section-note {
+      max-width: 380px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      letter-spacing: -.005em;
+    }
+
+    /* ============ BENTO (4 тайла) ============ */
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .tile {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 240px;
+      padding: 26px;
+      text-align: left;
+      color: inherit;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .tile:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-2);
+      background: rgba(168,85,247,.06);
+    }
+    .tile.featured {
+      grid-column: 1 / -1;
+      min-height: 280px;
+    }
+    .tile-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .tile-icon {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.18);
+      color: var(--purple-light);
+      margin-bottom: 24px;
+    }
+    .tile-icon svg { width: 20px; height: 20px; stroke-width: 1.6; }
+    .tile-title {
+      margin: auto 0 8px;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.2;
+    }
+    .tile.featured .tile-title { font-size: 30px; letter-spacing: -.03em; }
+    .tile-desc {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+      letter-spacing: -.005em;
+      max-width: 420px;
+    }
+    .tile-arrow {
+      position: absolute;
+      top: 24px; right: 24px;
+      width: 30px; height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--muted-2);
+      background: rgba(168,85,247,.06);
+      border: 1px solid var(--line);
+      transition: color .2s ease, background .2s ease, border-color .2s ease;
+    }
+    .tile:hover .tile-arrow {
+      color: var(--purple-bright);
+      background: rgba(168,85,247,.15);
+      border-color: var(--line-2);
+    }
+
+    /* ============ LATEST ============ */
+    .latest-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .latest-card {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 24px;
+      text-align: left;
+      color: inherit;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid var(--line);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .latest-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-2);
+      background: rgba(168,85,247,.06);
+    }
+    .latest-date {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--purple-light);
+      letter-spacing: -.005em;
+    }
+    .latest-date::before {
+      content: "";
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--purple);
+      box-shadow: 0 0 6px var(--purple);
+    }
+    .latest-card h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      line-height: 1.3;
+    }
+    .latest-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    /* ============ TEAM ============ */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .person {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 22px;
+      text-align: left;
+      color: inherit;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid var(--line);
+      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .person:hover {
+      transform: translateY(-2px);
+      border-color: var(--line-2);
+      background: rgba(168,85,247,.06);
+    }
+    .avatar {
+      position: relative;
+      width: 60px; height: 60px;
+      flex: 0 0 60px;
+      border-radius: 16px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+      color: #1a0518;
+      background: linear-gradient(145deg, #f3e8ff 0%, #d8b4fe 50%, #a855f7 100%);
+      box-shadow: 0 0 0 1px rgba(192,132,252,.25);
+    }
+    .avatar.alt {
+      background: linear-gradient(145deg, #f5f3ff 0%, #c4b5fd 50%, #8b5cf6 100%);
+    }
+    .avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .person-copy { min-width: 0; flex: 1; }
+    .person-copy h3 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      font-weight: 600;
+      letter-spacing: -.02em;
+    }
+    .person-copy p {
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .person-role {
+      display: block;
+      margin-top: 8px;
+      font-size: 10.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--purple-light);
+      opacity: .75;
+    }
+
+    /* ============ FOOTER ============ */
+    footer {
+      padding: 60px 20px 36px;
+      border-top: 1px solid var(--line);
+      background: rgba(5,1,10,.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .footer-inner { width: min(1080px, 100%); margin: 0 auto; }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding-bottom: 32px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .footer-tag {
+      max-width: 300px;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted-2);
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      align-items: start;
+    }
+    .footer-links a, .footer-links button {
+      color: var(--muted);
+      background: none;
+      border: 0;
+      padding: 0;
+      transition: color .15s ease;
+    }
+    .footer-links a:hover, .footer-links button:hover { color: var(--purple-light); }
+    .footer-bottom {
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted-2);
+    }
+    .footer-bottom p { max-width: 760px; margin: 0; line-height: 1.6; }
+
+    /* ============ MODAL ============ */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(5, 1, 12, .65);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .2s ease, visibility .2s ease;
+    }
+    .modal-bg.open { opacity: 1; visibility: visible; }
+    .modal {
+      width: min(520px, 100%);
+      padding: 32px;
+      border-radius: 22px;
+      position: relative;
+      background: rgba(28, 18, 44, .94);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--line-2);
+      box-shadow: 0 24px 60px rgba(0,0,0,.65);
+      transform: translateY(8px) scale(.98);
+      transition: transform .2s cubic-bezier(.2,.8,.2,1);
+    }
+    .modal-bg.open .modal { transform: none; }
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: rgba(168,85,247,.06);
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      transition: background .15s ease, color .15s ease;
+    }
+    .modal-close:hover { background: rgba(168,85,247,.16); color: var(--text); }
+    .modal-icon {
+      width: 48px; height: 48px;
+      border-radius: 13px;
+      display: grid;
+      place-items: center;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.18);
+      color: var(--purple-light);
+      margin-bottom: 22px;
+    }
+    .modal-icon svg { width: 22px; height: 22px; }
+    .modal h3 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -.025em;
+      line-height: 1.2;
+    }
+    .modal p { margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--muted); }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 900px) {
+      .latest-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .nav-links a:not(.nav-cta) { display: none; }
+      .bento { grid-template-columns: 1fr; }
+      .tile.featured { grid-column: 1; }
+    }
+    @media (max-width: 640px) {
+      .hero { padding: 72px 20px 64px; }
+      h1 { font-size: clamp(56px, 17vw, 88px); }
+      .hero-sub { font-size: 16px; }
+      section.block { padding: 60px 20px; }
+      .btn { min-width: 0; width: 100%; max-width: 280px; }
+      .hero-actions { flex-direction: column; align-items: stretch; }
+      .tile { padding: 22px; min-height: 200px; }
+      .tile-title { font-size: 20px; }
+      .tile.featured .tile-title { font-size: 26px; }
+      .team-grid { grid-template-columns: 1fr; }
+      .person { padding: 18px; gap: 16px; }
+      .avatar { width: 52px; height: 52px; flex-basis: 52px; border-radius: 14px; }
+      .section-head { flex-direction: column; align-items: start; gap: 12px; }
+      .modal { padding: 26px; border-radius: 20px; }
+      .modal h3 { font-size: 21px; }
+      .footer-top { flex-direction: column; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @supports not (backdrop-filter: blur(10px)) {
+      .nav, .modal, .tile, .latest-card, .person, footer {
+        background: rgba(24, 14, 40, .95);
+      }
+      .modal-bg { background: rgba(5, 1, 12, .95); }
+    }
+
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-track { background: var(--bg-bot); }
+    ::-webkit-scrollbar-thumb {
+      background: #6d28d9;
+      border-radius: 8px;
+      border: 3px solid var(--bg-bot);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #9333ea; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-wrap">
+    <div class="nav">
+      <a href="#top" class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Heliotrope</span>
+      </a>
+      <div class="nav-links">
+        <a href="#library">Library</a>
+        <a href="#latest">Latest</a>
+        <a href="#team">Team</a>
+        <button type="button" data-open="about">About</button>
+        <button type="button" class="nav-cta" data-open="contact">Contact</button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="eyebrow"><span class="eyebrow-dot"></span>AppleInternal Archive</div>
+        <h1>Heliotrope<span class="dot">.</span></h1>
+        <p class="hero-sub">Preserving the software, tools, and history built <strong>behind closed doors</strong>.</p>
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary" data-open="about">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="21 8 21 21 3 21 3 8"/>
+              <rect x="1" y="3" width="22" height="5" rx="1"/>
+              <line x1="10" y1="12" x2="14" y2="12"/>
+            </svg>
+            <span>Explore the archive</span>
+          </button>
+          <a class="btn btn-secondary" href="#library">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>Browse library</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIBRARY (4 тайла) -->
+    <section class="block" id="library">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">The collection</div>
+            <h2 class="section-title">The library<span class="muted">.</span></h2>
+          </div>
+          <p class="section-note">A curated entry point into internal software, tools, and preserved materials.</p>
+        </div>
+
+        <div class="bento">
+          <button class="tile featured" type="button" data-open="firmware">
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+            <div class="tile-content">
+              <div class="tile-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="2" width="16" height="20" rx="3"/>
+                  <path d="M12 18h.01M9 6h6"/>
+                </svg>
+              </div>
+              <h3 class="tile-title">Internal Firmwares</h3>
+              <p class="tile-desc">Prototype builds, restore images, and engineering releases — catalogued with build notes and device compatibility.</p>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="apps">
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+            <div class="tile-content">
+              <div class="tile-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="7" rx="2"/>
+                  <rect x="14" y="3" width="7" height="7" rx="2"/>
+                  <rect x="14" y="14" width="7" height="7" rx="2"/>
+                  <rect x="3" y="14" width="7" height="7" rx="2"/>
+                </svg>
+              </div>
+              <h3 class="tile-title">Apps</h3>
+              <p class="tile-desc">Internal utilities and diagnostics.</p>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="guides">
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+            <div class="tile-content">
+              <div class="tile-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+              </div>
+              <h3 class="tile-title">Guides</h3>
+              <p class="tile-desc">Research notes and practical walkthroughs.</p>
+            </div>
+          </button>
+
+          <button class="tile" type="button" data-open="archive">
+            <span class="tile-arrow" aria-hidden="true">↗</span>
+            <div class="tile-content">
+              <div class="tile-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 8h16v13H4zM3 3h18v5H3zM9 12h6"/>
+                </svg>
+              </div>
+              <h3 class="tile-title">Archive</h3>
+              <p class="tile-desc">Documents, references, and preserved materials.</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LATEST -->
+    <section class="block" id="latest">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">Recent</div>
+            <h2 class="section-title">Latest additions<span class="muted">.</span></h2>
+          </div>
+          <p class="section-note">Recent discoveries and documentation updates.</p>
+        </div>
+
+        <div class="latest-grid">
+          <button class="latest-card" type="button" data-open="firmware">
+            <span class="latest-date">September 28, 2026</span>
+            <h3>Firmware collection expanded</h3>
+            <p>Newly catalogued internal restore images, build notes, and device compatibility details.</p>
+          </button>
+          <button class="latest-card" type="button" data-open="guides">
+            <span class="latest-date">September 14, 2026</span>
+            <h3>Field guide refresh</h3>
+            <p>Cleaner steps, updated references, and improved navigation across the guides section.</p>
+          </button>
+          <button class="latest-card" type="button" data-open="apps">
+            <span class="latest-date">August 31, 2026</span>
+            <h3>Four apps indexed</h3>
+            <p>Metadata, screenshots, and version history added for four internal engineering apps.</p>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEAM -->
+    <section class="block" id="team">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="section-kicker">People</div>
+            <h2 class="section-title">The team<span class="muted">.</span></h2>
+          </div>
+          <p class="section-note">Independent researchers committed to digital preservation.</p>
+        </div>
+
+        <div class="team-grid">
+          <button class="person" type="button" data-open="mokquad">
+            <div class="avatar">MQ<img src="/Assets/Icons/Mokquad.png" alt="" onerror="this.remove()"></div>
+            <div class="person-copy">
+              <h3>Mokquad</h3>
+              <p>Development, research, and archive infrastructure.</p>
+              <span class="person-role">Developer &amp; Archivist</span>
+            </div>
+          </button>
+          <button class="person" type="button" data-open="lopata">
+            <div class="avatar alt">LO<img src="/Assets/Icons/Lopata.png" alt="" onerror="this.remove()"></div>
+            <div class="person-copy">
+              <h3>Lopata</h3>
+              <p>Research, curation, and collection verification.</p>
+              <span class="person-role">Researcher &amp; Curator</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <div class="footer-brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span>Heliotrope</span>
+          </div>
+          <p class="footer-tag">An independent archive for AppleInternal software, tools, and history.</p>
+        </div>
+        <div class="footer-links">
+          <a href="#library">Library</a>
+          <a href="#latest">Latest</a>
+          <a href="#team">Team</a>
+          <button type="button" data-open="about">About</button>
+          <button type="button" data-open="contact">Contact</button>
+          <button type="button" data-open="bugs">Bug reports</button>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Heliotrope is an independent archival project. Not affiliated with, authorized, sponsored, or endorsed by Apple Inc. Apple and related marks are trademarks of Apple Inc. All referenced materials remain the property of their respective owners.</p>
+        <p>© <span id="year"></span> Purple Project Team</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-bg" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal">
+      <button class="modal-close" type="button" aria-label="Close">×</button>
+      <div class="modal-icon" id="modal-icon" aria-hidden="true"></div>
+      <h3 id="modal-title"></h3>
+      <p id="modal-copy"></p>
+    </div>
+  </div>
+
+  <script>
+    const icons = {
+      firmware: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"/><path d="M12 18h.01M9 6h6"/></svg>',
+      guides: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+      apps: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>',
+      archive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h16v13H4zM3 3h18v5H3zM9 12h6"/></svg>',
+      person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+      about: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>',
+      contact: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4H6.5A2.5 2.5 0 0 1 4 13.5z"/></svg>',
+      bugs: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8V6a3 3 0 0 1 6 0v2M7 9h10v6a5 5 0 0 1-10 0zM4 11h3M17 11h3M4 16h3M17 16h3"/></svg>'
+    };
+
+    const content = {
+      firmware: { title: 'Internal Firmwares', icon: 'firmware', copy: 'A structured collection of prototype builds, internal restore images, engineering releases, and related build information. Entries are organized to keep platform, version, provenance, and compatibility context easy to understand.' },
+      guides: { title: 'Guides', icon: 'guides', copy: 'Research notes and practical walkthroughs for identifying builds, understanding internal tools, examining metadata, and navigating the archive responsibly.' },
+      apps: { title: 'Apps', icon: 'apps', copy: 'A catalogue of internal utilities, diagnostics, demonstration software, and engineering applications — with screenshots, version information, and historical context where available.' },
+      archive: { title: 'Archive', icon: 'archive', copy: 'The wider preservation collection: documents, photographs, interface captures, metadata, references, and other historically useful materials related to AppleInternal.' },
+      mokquad: { title: 'Mokquad', icon: 'person', copy: 'Developer and archivist working on Heliotrope’s interface, research systems, catalogue structure, and the technical foundation that keeps the collection accessible.' },
+      lopata: { title: 'Lopata', icon: 'person', copy: 'Researcher and curator focused on discovering material, checking context, organizing entries, and improving the quality of the preserved collection.' },
+      about: { title: 'About Heliotrope', icon: 'about', copy: 'Formerly known as iArchive 2, Heliotrope is an independent community project that aims to document and preserve AppleInternal software and related history. It is not connected with Apple Inc.' },
+      contact: { title: 'Contact the team', icon: 'contact', copy: 'Want to share a lead, ask a question, or leave a contact? Send a message to the Purple Project Team through the project’s usual contact channel.' },
+      bugs: { title: 'Report a bug', icon: 'bugs', copy: 'Found a broken link, incorrect metadata, or an interface problem? Include the page, a short description, and any useful reproduction details in your report.' }
+    };
+
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalCopy = document.getElementById('modal-copy');
+    const modalIcon = document.getElementById('modal-icon');
+    const closeBtn = modal.querySelector('.modal-close');
+    let lastFocus = null;
+
+    function openModal(key) {
+      const item = content[key];
+      if (!item) return;
+      lastFocus = document.activeElement;
+      modalTitle.textContent = item.title;
+      modalCopy.textContent = item.copy;
+      modalIcon.innerHTML = icons[item.icon];
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus();
+    }
+
+    document.querySelectorAll('[data-open]').forEach(el => {
+      el.addEventListener('click', () => openModal(el.dataset.open));
+    });
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && modal.classList.contains('open')) closeModal(); });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
