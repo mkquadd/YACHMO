@@ -1,0 +1,2031 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0417">
+  <meta name="description" content="Heliotrope — Internal Firmwares collection.">
+  <title>Internal Firmwares — Heliotrope</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #160a2a;
+      --bg-mid: #0b0418;
+      --bg-bot: #05010a;
+      --text: #f5f0ff;
+      --text-2: #cdc3dc;
+      --muted: #9a8fb0;
+      --muted-2: #6e6486;
+      --line: rgba(168,85,247,.10);
+      --line-2: rgba(192,132,252,.24);
+      --purple: #a855f7;
+      --purple-light: #c4b5fd;
+      --purple-bright: #d8b4fe;
+      --purple-deep: #7c3aed;
+      --radius: 16px;
+      --radius-lg: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-bot);
+      scroll-padding-top: 140px;
+      scrollbar-gutter: stable;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.55;
+      letter-spacing: -.008em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      background: transparent;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background: linear-gradient(180deg,
+        var(--bg-top) 0%, #100622 18%, var(--bg-mid) 48%, #07020f 82%, var(--bg-bot) 100%);
+    }
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(1000px 700px at 50% -8%, rgba(168,85,247,.18), transparent 60%),
+        radial-gradient(800px 600px at 88% 28%, rgba(124,58,237,.10), transparent 55%),
+        radial-gradient(900px 700px at 12% 75%, rgba(147,51,234,.08), transparent 55%);
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; color: inherit; cursor: pointer; }
+
+    /* ============ NAV ============ */
+    .nav-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 16px 0;
+      pointer-events: none;
+    }
+    .nav {
+      pointer-events: auto;
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      height: 52px;
+      padding: 0 6px 0 16px;
+      border-radius: 16px;
+      background: rgba(24, 14, 40, .55);
+      backdrop-filter: blur(28px) saturate(180%);
+      -webkit-backdrop-filter: blur(28px) saturate(180%);
+      border: 1px solid var(--line-2);
+      box-shadow: 0 6px 24px rgba(0,0,0,.4);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; font-weight: 600; letter-spacing: -.015em;
+    }
+    .brand-mark {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(145deg, #e9d5ff 0%, #a855f7 50%, #6d28d9 100%);
+      box-shadow: 0 0 0 1px rgba(192,132,252,.2), 0 2px 8px rgba(124,58,237,.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-mark::before {
+      content: "";
+      position: absolute;
+      width: 4px; height: 14px;
+      border-radius: 2px;
+      background: rgba(255,255,255,.9);
+      transform: rotate(30deg);
+      left: 9px; top: 4px;
+    }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.3) 0%, transparent 55%);
+    }
+    .nav-links { display: flex; align-items: center; gap: 2px; font-size: 13px; }
+    .nav-links a, .nav-links button {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 9px;
+      font-weight: 500;
+      transition: color .15s ease, background .15s ease, border-color .15s ease;
+      letter-spacing: -.005em;
+    }
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(168,85,247,.12);
+    }
+    .nav-links svg { width: 14px; height: 14px; }
+    .nav-cta {
+      background: rgba(168,85,247,.14) !important;
+      color: var(--purple-bright) !important;
+      border: 1px solid rgba(192,132,252,.32) !important;
+    }
+    .nav-cta:hover {
+      background: rgba(168,85,247,.22) !important;
+      border-color: rgba(192,132,252,.5) !important;
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      position: relative;
+      padding: 80px 20px 60px;
+      text-align: center;
+    }
+    .hero-inner { position: relative; max-width: 880px; margin: 0 auto; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(168,85,247,.08);
+      border: 1px solid rgba(192,132,252,.2);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--purple-light);
+      margin-bottom: 24px;
+    }
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple-light);
+      box-shadow: 0 0 8px var(--purple);
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: clamp(44px, 8vw, 88px);
+      font-weight: 700;
+      line-height: .95;
+      letter-spacing: -.045em;
+      color: #ffffff;
+    }
+    h1 .dot { color: var(--purple-bright); }
+
+    .hero-sub {
+      max-width: 520px;
+      margin: 0 auto 28px;
+      font-size: clamp(15px, 1.7vw, 18px);
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .credits {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      align-items: center;
+      max-width: 720px;
+      font-size: 12.5px;
+      color: var(--muted-2);
+      padding: 10px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--line);
+    }
+    .credits span { color: var(--muted); font-weight: 500; }
+
+    /* ============ CATEGORY NAV ============ */
+    .cat-nav {
+      position: sticky;
+      top: 78px;
+      z-index: 90;
+      padding: 10px 16px;
+      margin-bottom: 10px;
+      pointer-events: none;
+    }
+    .cat-nav-inner {
+      pointer-events: auto;
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      gap: 6px;
+      padding: 6px;
+      border-radius: 14px;
+      background: rgba(24, 14, 40, .7);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-nav-inner::-webkit-scrollbar { display: none; }
+    .cat-nav-inner a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: color .15s ease, background .15s ease;
+      flex-shrink: 0;
+    }
+    .cat-nav-inner a:hover {
+      color: var(--text);
+      background: rgba(168,85,247,.12);
+    }
+    .cat-nav-inner a .count {
+      font-size: 11px;
+      padding: 1px 6px;
+      border-radius: 6px;
+      background: rgba(168,85,247,.14);
+      color: var(--purple-light);
+      font-weight: 600;
+    }
+
+    /* ============ SECTIONS ============ */
+    main { padding: 20px 20px 80px; }
+    .container { width: min(1080px, 100%); margin: 0 auto; }
+
+    .cat-section {
+      padding: 40px 0;
+      scroll-margin-top: 140px;
+    }
+    .cat-section + .cat-section {
+      border-top: 1px solid var(--line);
+    }
+    .cat-title {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin: 0 0 24px;
+      font-size: clamp(24px, 3vw, 32px);
+      font-weight: 600;
+      letter-spacing: -.03em;
+      line-height: 1.15;
+    }
+    .cat-title .muted { color: var(--muted-2); }
+    .cat-title .count {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted-2);
+      letter-spacing: 0;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .device-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+    .device-grid.single { grid-template-columns: 1fr; }
+
+    /* ============ DEVICE CARD ============ */
+    .device {
+      position: relative;
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.03);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid var(--line);
+      padding: 20px;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    .device:hover {
+      border-color: var(--line-2);
+      background: rgba(168,85,247,.04);
+    }
+    .device-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .device-name {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -.022em;
+      line-height: 1.25;
+    }
+    .device-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      letter-spacing: -.002em;
+      font-variant-numeric: tabular-nums;
+    }
+    .chip svg { width: 10px; height: 10px; opacity: .55; }
+    .chip .key { color: var(--muted-2); font-weight: 500; }
+    .build-count {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-2);
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    /* ============ BUILDS ============ */
+    .builds {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .build {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      transition: background .15s ease;
+      font-size: 13px;
+    }
+    .build:hover {
+      background: rgba(255,255,255,.03);
+    }
+    .build-version {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0;
+    }
+    .build-name {
+      font-size: 12.5px;
+      color: var(--text-2);
+    }
+    .build-type {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 5px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+    .build-type.nonui {
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+    }
+    .build-type.internal {
+      color: var(--purple-bright);
+      background: rgba(168,85,247,.16);
+    }
+    .build-type.demo,
+    .build-type.factory {
+      color: var(--purple-light);
+      background: rgba(168,85,247,.08);
+    }
+    .build-type.unknown {
+      color: var(--muted-2);
+      background: rgba(255,255,255,.02);
+    }
+    .build-spacer { flex: 1; }
+
+    .build-dl {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.2);
+      color: var(--purple-light);
+      transition: background .15s ease, color .15s ease, border-color .15s ease;
+      flex-shrink: 0;
+    }
+    .build-dl:hover {
+      background: rgba(168,85,247,.24);
+      color: var(--purple-bright);
+      border-color: rgba(192,132,252,.45);
+    }
+    .build-dl svg { width: 14px; height: 14px; }
+
+    /* Other-list style for mixed items */
+    .other-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .other-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 10px;
+      border-radius: 8px;
+      transition: background .15s ease;
+    }
+    .other-list li:hover { background: rgba(255,255,255,.03); }
+    .other-label {
+      flex: 1;
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.45;
+    }
+    .other-label .build-version { color: var(--text); margin-right: 6px; }
+
+    /* ============ FOOTER ============ */
+    footer {
+      padding: 40px 20px 36px;
+      border-top: 1px solid var(--line);
+      background: rgba(5,1,10,.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .footer-inner {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted-2);
+    }
+    .footer-inner p { margin: 0; line-height: 1.6; }
+    .footer-inner a { color: var(--muted); transition: color .15s ease; }
+    .footer-inner a:hover { color: var(--purple-light); }
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width: 900px) {
+      .cat-nav { top: 74px; }
+    }
+    @media (max-width: 720px) {
+      .device-grid { grid-template-columns: 1fr; }
+      .cat-nav { top: 72px; padding: 8px 12px; }
+      .cat-nav-inner { padding: 4px; }
+      .cat-nav-inner a { padding: 7px 12px; font-size: 12.5px; }
+    }
+    @media (max-width: 640px) {
+      .hero { padding: 60px 20px 44px; }
+      h1 { font-size: clamp(38px, 12vw, 56px); }
+      .hero-sub { font-size: 15px; }
+      main { padding: 10px 16px 60px; }
+      .cat-section { padding: 32px 0; }
+      .device { padding: 16px; }
+      .device-name { font-size: 16.5px; }
+      .build { padding: 7px 8px; font-size: 12.5px; }
+      .build-version { font-size: 12px; }
+      .footer-inner { flex-direction: column; gap: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; }
+    }
+
+    @supports not (backdrop-filter: blur(10px)) {
+      .nav, .cat-nav-inner, .device, footer { background: rgba(24, 14, 40, .95); }
+    }
+
+    ::-webkit-scrollbar { width: 12px; height: 12px; }
+    ::-webkit-scrollbar-track { background: var(--bg-bot); }
+    ::-webkit-scrollbar-thumb {
+      background: #6d28d9;
+      border-radius: 8px;
+      border: 3px solid var(--bg-bot);
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #9333ea; }
+  </style>
+</head>
+<body>
+
+<nav class="nav-wrap">
+  <div class="nav">
+    <a href="../index.html" class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Heliotrope</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to archive
+      </a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Collection</div>
+    <h1>Internal Firmwares<span class="dot">.</span></h1>
+    <p class="hero-sub">Prototype builds, restore images, and engineering releases from the AppleInternal ecosystem.</p>
+    <div class="credits">
+      <span>Big thanks to</span> Stonneph · Someyoshino · Dosdude · Orangerain · plx
+    </div>
+  </div>
+</header>
+
+<nav class="cat-nav" aria-label="Categories">
+  <div class="cat-nav-inner">
+    <a href="#iphone">iPhone <span class="count">29</span></a>
+    <a href="#ipad">iPad <span class="count">15</span></a>
+    <a href="#ipod">iPod <span class="count">5</span></a>
+    <a href="#watch">Watch <span class="count">3</span></a>
+    <a href="#macos">macOS <span class="count">6</span></a>
+    <a href="#t2">T1 / T2 <span class="count">2</span></a>
+    <a href="#horizon">Horizon</a>
+    <a href="#other">Other</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- ================= IPHONE ================= -->
+    <section class="cat-section" id="iphone">
+      <h2 class="cat-title">iPhone <span class="count">29 devices</span></h2>
+      <div class="device-grid">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 2G</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> M68AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8900</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">1A420</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/2RUhTZpA#HmRsztmrp6bHJOIAfrwyZW6hKECvpR-JAS8_Ot5F_8E" target="_blank" rel="noopener" aria-label="Download 1A420"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 3G</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N82AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8900</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">5C274a</span>
+              <span class="build-type nonui">NonUI</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 3GS</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N88AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8920</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">8A2180g</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/TEdTESKa#s-Mu6FH3Ia3Fz2ptCZnmXR-qjmNc7mfrDi0bNNXT9So" target="_blank" rel="noopener" aria-label="Download 8A2180g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">9B3176n</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/fU8knLBQ#irr7elB2gi_ENYEDbLeEZ5NPc226p5KF00fEzUes2fk" target="_blank" rel="noopener" aria-label="Download 9B3176n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 4</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N90AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8930</span>
+              </div>
+            </div>
+            <span class="build-count">5 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">8A133</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/3VckjJqZ#F11U23fjoCGr5OJ_2zOBVEz-OAs4qDU57pb8CjMKGDQ" target="_blank" rel="noopener" aria-label="Download 8A133"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">9B3176n</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/TcsACRJT#P1H39HVE3hcN8wNlEnWIW2qS5AfLOfRZfHppdC-c7YY" target="_blank" rel="noopener" aria-label="Download 9B3176n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">8A2180g</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/TVlFXKSQ#9o04A2mOgwcnT8kzabo0TialC5SpYzu9EuT09zLL6uY" target="_blank" rel="noopener" aria-label="Download 8A2180g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11B554a</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://drive.google.com/file/d/1TUgkD5X1KQfHhX8LDYjj85BwNSSCYYKc/view" target="_blank" rel="noopener" aria-label="Download 11B554a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">9A2306f</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://drive.google.com/file/d/18FKQwf05myuiOZT1ycy0zdzS8pzUAxZH/view" target="_blank" rel="noopener" aria-label="Download 9A2306f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 4S</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N94AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8940</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">9A2264r</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/Z8ISjZrD#3VxgZ7ufm596Gnlram8nUuJTCf1N421664QuqhEFZlg" target="_blank" rel="noopener" aria-label="Download 9A2264r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">9A2306f</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/osBzjLBR#XtL_ZNq7Zj03v3vqz0XRZEU25eyvaHiWlYi8hDM-1WM" target="_blank" rel="noopener" aria-label="Download 9A2306f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">10A23941a</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/09p1AKZS#T4UtkODRa8EPD2YVzemZOBp5SaLmLLnUVyUD2UROgvA" target="_blank" rel="noopener" aria-label="Download 10A23941a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 5</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N41AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8950</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">10A23110z</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/E1xF3ZyK#u6bOeJsMwMybg8cxaa4Ca6Gz-1hPYP9UD2Ern9UFNrg" target="_blank" rel="noopener" aria-label="Download 10A23110z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">10A316</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/0pBWmATT#hp4RPSo-Fjf6iAJfnrhmUCocrOwiMLT5GEDpe7t1ubw" target="_blank" rel="noopener" aria-label="Download 10A316"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11A465</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/s5oxnaAQ#AulBoUHJc5ILoCHNu2xdAD0B_7WJLwTtWSf5XEEyTmA" target="_blank" rel="noopener" aria-label="Download 11A465"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 5c</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N48AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8950</span>
+              </div>
+            </div>
+            <span class="build-count">5 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">11A63840h</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/O8ZFUZgS#MqGC3wZDpCChfD1fxegEnRyb5yItXn1gpxFQBcDGEUo" target="_blank" rel="noopener" aria-label="Download 11A63840h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11A93840l</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/q94RRK5Z#wg65pIXk3bvUHvzXTUdpD6xxMTHnB3iUH2IHRV9RU6E" target="_blank" rel="noopener" aria-label="Download 11A93840l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11A93840j</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/7.0_11A93840j_NonUI_N48AP_Unknown/" target="_blank" rel="noopener" aria-label="Download 11A93840j"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11D31620l</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/20YSHTgR#0TTek-1ZcLyep3GBLIKqXt6lVKPBr8ZMCdJAG1O6UlA" target="_blank" rel="noopener" aria-label="Download 11D31620l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11D31620u</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/2wInxKLA#GNWnwHKna9SJPmQIwivQ1GJTjy1Cwi2Q_ScwyR-sY9M" target="_blank" rel="noopener" aria-label="Download 11D31620u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 5s</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N51AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8960</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">11A24580o</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/WpBEzZZD#NMWnla3eSND_ozQaw7o-3VjAYuoKOEtZXUbyQIrfo3g" target="_blank" rel="noopener" aria-label="Download 11A24580o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">11A24581c</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/G0x1SZyZ#_XcrKfjycI9gpudFzvfXMj6IYmtKh9sfaowscgTQuSY" target="_blank" rel="noopener" aria-label="Download 11A24581c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 6</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N61AP</span>
+                <span class="chip"><span class="key">SoC</span> T7000</span>
+              </div>
+            </div>
+            <span class="build-count">4 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">12A93311h</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/HxAmELyb#UU-d5trHFs1bEGNBBcdatrib_Pdys4UH7JGs76SMf_Y" target="_blank" rel="noopener" aria-label="Download 12A93311h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">12A93650o</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/L4hCDRzS#d6u2JxUykkv6MUtvwrodmoGAuiUiC33tcLSs1lgW_gM" target="_blank" rel="noopener" aria-label="Download 12A93650o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">12A93651a</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/P1hgHTSb#adiiI_JkL8UWsfmOVHY0i8VqBUvNGWPAZHbd2ntIwRY" target="_blank" rel="noopener" aria-label="Download 12A93651a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">15E216</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/11.3_15E216_InternalUI_N71AP_MP/iPhone8%2C1-carrierOS_11_2_15E216-Dump_from_StellaFudge.zip" target="_blank" rel="noopener" aria-label="Download 15E216"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 6s</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N71AP</span>
+                <span class="chip"><span class="key">SoC</span> S8000</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">13A93051l</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/WlZWQDYJ#-XGZjOBqoM7E_IoVqjWLYWRf0eVH3dg4s-pK4QsaTf4" target="_blank" rel="noopener" aria-label="Download 13A93051l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 6s Plus</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N66AP</span>
+                <span class="chip"><span class="key">SoC</span> S8000</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">15C50</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://web.archive.org/web/20230602172702/https://iarchive.app/Download/15C50.zpaq" target="_blank" rel="noopener" aria-label="Download 15C50"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">13Z7316</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://drive.google.com/file/d/1hscq-QJf3oINonIvu6HeK5OK-UKZoXCe/view" target="_blank" rel="noopener" aria-label="Download 13Z7316"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 7</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D10AP</span>
+                <span class="chip"><span class="key">SoC</span> T8010</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">14A93012d</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/10.0_14A93012d_NonUI_D10AP_Unknown/14A93012d_rootfs.dmg" target="_blank" rel="noopener" aria-label="Download 14A93012d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">14A93012r</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/D5Aw1LTD#nYNy_tE6KdNe1sO4HRD6YLxTKXxHHdNqIghgQWDyvx4" target="_blank" rel="noopener" aria-label="Download 14A93012r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">14Z1062</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/WkpEmBDD#ZYcukzUjx_Q97ln_EqquFJtRuzVhqtknnytzYcEh1n8" target="_blank" rel="noopener" aria-label="Download 14Z1062"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 8</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D20AP</span>
+                <span class="chip"><span class="key">SoC</span> T8015</span>
+              </div>
+            </div>
+            <span class="build-count">4 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">15A369</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/11.0_15A369_Rel_D201AP_PRB/" target="_blank" rel="noopener" aria-label="Download 15A369"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">15A93720r</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/Wo4CVATa#xbrfZpg5MBBNzk6ye_55am-6F96FqZ4oekNYm2GMDgc" target="_blank" rel="noopener" aria-label="Download 15A93720r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">15A93261h</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/u0xBRJpT#uIjySku6lftYzI6jddHuKDFK4q-RGeJkSEaaMNsdFP8" target="_blank" rel="noopener" aria-label="Download 15A93261h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">17A508</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://drive.usercontent.google.com/download?id=1Cl6P_4jprm9bQB3SBOeyMshfeLpsafr0&export=download&authuser=0" target="_blank" rel="noopener" aria-label="Download 17A508"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 8 Plus</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D21AP</span>
+                <span class="chip"><span class="key">SoC</span> T8015</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">15A23061c</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/eto2wZDa#BTU5WmYIKw__-Qf-O8vZYJerxxUMQqHAq1CbNQzseJw" target="_blank" rel="noopener" aria-label="Download 15A23061c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone X</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D22AP</span>
+                <span class="chip"><span class="key">SoC</span> T8015</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">15A783601y</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://drive.usercontent.google.com/download?id=1wsC0WQS-sCCRcmSmTbcDdX_nAFxGisRQ&export=download&authuser=0" target="_blank" rel="noopener" aria-label="Download 15A783601y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">16C49</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/Cd0zVKCa#lut8QJ_cxXqyJ7W4Q7wXBO6K9breZG7ViZSyxT1W_wo" target="_blank" rel="noopener" aria-label="Download 16C49"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">17A512</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/13.0_17A512_InternalUI_D22AP/" target="_blank" rel="noopener" aria-label="Download 17A512"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone XR</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N841AP</span>
+                <span class="chip"><span class="key">SoC</span> T8020</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">16A13580x</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/KoRyEQ6b#nDdfyDwwSASAFrkbzYChhDKFRK8LLc_ESr0ADm_ycFs" target="_blank" rel="noopener" aria-label="Download 16A13580x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">16A13580z</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/vspEFbgY#CCeCY4iyR9LCyTYX_YDcgEcnU9K8_XvkxM91KSFyvS0" target="_blank" rel="noopener" aria-label="Download 16A13580z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">16A13581a</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/S4BXhabb#LVS7OdMfCXsFv_bRu3tg2uZ6SMVHZfXSFzlFbjdRP9g" target="_blank" rel="noopener" aria-label="Download 16A13581a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone XS</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D321AP</span>
+                <span class="chip"><span class="key">SoC</span> T8020</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">16B92</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://web.archive.org/web/20230602172702/https://iarchive.app/Download/16B92.zpaq" target="_blank" rel="noopener" aria-label="Download 16B92"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">19A188</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/15.0_19A188_InternalUI_D331pAP_DVT/" target="_blank" rel="noopener" aria-label="Download 19A188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone XS Max</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D331AP</span>
+                <span class="chip"><span class="key">SoC</span> T8020</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">17B45a</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/rJlzWKLQ#Cn2z-DIamZXuehxskrY5yfemDP2qQIskXhE8BxBxoJU" target="_blank" rel="noopener" aria-label="Download 17B45a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">18A245z</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.0_18A245z_InternalUI_D331pAP_DVT/" target="_blank" rel="noopener" aria-label="Download 18A245z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 11</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N104AP</span>
+                <span class="chip"><span class="key">SoC</span> T8030</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">18A188</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://web.archive.org/web/20230602172702/https://iarchive.app/Download/18A188.tar.gz" target="_blank" rel="noopener" aria-label="Download 18A188"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 12 Mini</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D52gAP</span>
+                <span class="chip"><span class="key">SoC</span> T8101</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">18A33771c</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/KjoxmRZC#N6X9DZs9mpSbwCmbackground4aB1Gihvlzx1mVsFydHoKT_Z7c" target="_blank" rel="noopener" aria-label="Download 18A33771c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">18A93560w</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.1_18A93560w_NonUI_D52gAP_DVT/" target="_blank" rel="noopener" aria-label="Download 18A93560w"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">18A8359a</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/DUtj2aTS#ctjK2BA_uGEMDqmhyyUJLbDlsllQxAx0lR_X6sSsEj0" target="_blank" rel="noopener" aria-label="Download 18A8359a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 12</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D53gAP</span>
+                <span class="chip"><span class="key">SoC</span> T8101</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">18A8359a</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.1_18A8359a_InternalUI_D53gAP_CRB/" target="_blank" rel="noopener" aria-label="Download 18A8359a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">18A21860t</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://archive.org/download/apple-iphone-12-azulnanshan-18a21860t.-iphone-factoryos-switchboard-internal-fil/iPhone13%2C2_14.0_18A21860t_2026-04-14_1807_APFS_Live.zip" target="_blank" rel="noopener" aria-label="Download 18A21860t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 12 Pro</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D53pAP</span>
+                <span class="chip"><span class="key">SoC</span> T8101</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">18C57</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/pMoyFC4K#kNkh0A15q9lYWjaTkzMBuvQzUqELDUCZh2iFk_Qa7d4" target="_blank" rel="noopener" aria-label="Download 18C57"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 12 Pro Max</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D54pAP</span>
+                <span class="chip"><span class="key">SoC</span> T8101</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">18A21860t</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.0_18A23120o_NonUI_D54pAP_EVT/" target="_blank" rel="noopener" aria-label="Download 18A21860t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 13 Pro</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D63AP</span>
+                <span class="chip"><span class="key">SoC</span> T8110</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">20A5312i</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/file/hH9wTAxI#iU2m6a_91BfsTJveXpD1OVRqiDpzUzzRvwEt3HyWT0E" target="_blank" rel="noopener" aria-label="Download 20A5312i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 14 Pro Max</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D74AP</span>
+                <span class="chip"><span class="key">SoC</span> T8120</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">21A360</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.0.3_21A360_InternalUI_D74AP_PVTE/" target="_blank" rel="noopener" aria-label="Download 21A360"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">21B64</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.1_21B64_InternalUI_D74AP_PVTE/" target="_blank" rel="noopener" aria-label="Download 21B64"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">21F90</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="http://applintrnl.app/dumps/iOS/17.5.1_21F90_InternalUI_D74AP_DVT/" target="_blank" rel="noopener" aria-label="Download 21F90"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 14 Plus</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D28AP</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">20A23181k</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/16.0_20A23181k_NonUI_D28AP_DVT/" target="_blank" rel="noopener" aria-label="Download 20A23181k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">20A23181m</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/16.0_20A23181m_NonUI_D28AP_PRB/" target="_blank" rel="noopener" aria-label="Download 20A23181m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 15 Plus</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D38AP</span>
+                <span class="chip"><span class="key">SoC</span> T8120</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">21A70691t</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.0_21A70691t_NonUI_D38AP_PROTO1/" target="_blank" rel="noopener" aria-label="Download 21A70691t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+                            <span class="build-version">21A71271t</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.0_21A71271t_NonUI_D38AP_PROTO2/" target="_blank" rel="noopener" aria-label="Download 21A71271t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">21A61831m</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.0_21A61831m_NonUI_D38AP_EVT/" target="_blank" rel="noopener" aria-label="Download 21A61831m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 15 Pro Max</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D84AP</span>
+                <span class="chip"><span class="key">SoC</span> T8120</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">21A62380n</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/folder/3AUllbhR#hx4dpvsamnrv1Qx3cQ140Q" target="_blank" rel="noopener" aria-label="Download 21A62380n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+            <li class="build">
+              <span class="build-version">22E252</span>
+              <span class="build-type internal">Internal</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://applintrnl.app/dumps/iOS/18.4.1_22E252_InternalUI_D84AP_DVT/" target="_blank" rel="noopener" aria-label="Download 22E252"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPhone 16</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> D47AP</span>
+                <span class="chip"><span class="key">SoC</span> T8140</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build">
+              <span class="build-version">22A92871y</span>
+              <span class="build-type nonui">NonUI</span>
+              <span class="build-spacer"></span>
+              <a class="build-dl" href="https://mega.nz/folder/dFAFTagB#br7OZiFnfNNookeV9jCu_Q" target="_blank" rel="noopener" aria-label="Download 22A92871y"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+            </li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= IPAD ================= -->
+    <section class="cat-section" id="ipad">
+      <h2 class="cat-title">iPad <span class="count">15 devices</span></h2>
+      <div class="device-grid">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad 1</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> K48AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8930X</span>
+              </div>
+            </div>
+            <span class="build-count">6 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">7B3367h</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2_7B3367h_NonUI_K48AP_RAMP/" target="_blank" rel="noopener" aria-label="Download 7B3367h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">7B3404i</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2.1_7B3404i_NonUI_K48AP_PVTMINI/" target="_blank" rel="noopener" aria-label="Download 7B3404i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">7B3404d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2.1_7B3404d_NonUI_K48AP_MP/WildYabuli7B3403d.NonUIOS.dmg" target="_blank" rel="noopener" aria-label="Download 7B3404d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">7B3367c</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2_7B3367c_NonUI_K48AP_MP/" target="_blank" rel="noopener" aria-label="Download 7B3367c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">7B5311f</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2_7B5311f_NonUI_K48AP_PVT/" target="_blank" rel="noopener" aria-label="Download 7B5311f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">7B3356d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/3.2_7B3356d_NonUI_K48AP_MP/" target="_blank" rel="noopener" aria-label="Download 7B3356d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad 2</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> K93AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8940</span>
+              </div>
+            </div>
+            <span class="build-count">10 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">8F3191d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/HppCAR6D#8uOVtmJ4p9i0YUsliuCIjssWHpnYxs-YGRR2yJBpnA4" target="_blank" rel="noopener" aria-label="Download 8F3191d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3184a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/4.3_8F3184a_NonUI_K9xAP_DVT_MCQ/DurangoYabuli8F3184a.K93K94K95FactoryOS.dmg" target="_blank" rel="noopener" aria-label="Download 8F3184a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3149c</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/4.3_8F3149c_NonUI_K9xAP_DVT_MCQ/8F3149c.dmg" target="_blank" rel="noopener" aria-label="Download 8F3149c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3191a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://archive.org/download/durango-yabuli-8-f-3191a.-k-93-k-94-k-95-factory-os/DurangoYabuli8F3191a.K93K94K95FactoryOS.dmg" target="_blank" rel="noopener" aria-label="Download 8F3191a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3149d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/4.3_8F3149d_NonUI_K95AP/" target="_blank" rel="noopener" aria-label="Download 8F3149d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3181b</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/4.3_8F3181b_NonUI_K9xAP_DVT_MCQ/8F3181b.dmg" target="_blank" rel="noopener" aria-label="Download 8F3181b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8F3191g</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/4.3_8F3191g_NonUI_K9xAP_DVT_MCQ/DurangoYabuli8F3191g.K93K94K95FactoryOS.dmg" target="_blank" rel="noopener" aria-label="Download 8F3191g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">8H3007a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://archive.org/download/durango-yabuli-8-h-3007a.-k-93-k-94-k-95-factory-os/DurangoYabuli8H3007a.K93K94K95FactoryOS.dmg" target="_blank" rel="noopener" aria-label="Download 8H3007a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">9B3176a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/5.1_9B3176a_NonUI_K93AP/" target="_blank" rel="noopener" aria-label="Download 9B3176a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">11B554a</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/OgJClZAK#jpz_F-7rJQ6nIjv4kCQ-6_jiiH0b9yAkgYUdhEv2nw0" target="_blank" rel="noopener" aria-label="Download 11B554a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Mini 1</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> P105AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8942</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">10A63971b</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/S0ZgVaRD#58kUIm4bs4fWE4z-oegNhyzpHFaTJCaabAFoKvACRf4" target="_blank" rel="noopener" aria-label="Download 10A63971b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad 3</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J2AP, J2aAP, J1AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8945</span>
+              </div>
+            </div>
+            <span class="build-count">4 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">9B3077k</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/5.1_9B3077k_NonUI_J1AP_DVT/" target="_blank" rel="noopener" aria-label="Download 9B3077k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">9B3176p</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/5.1_9B3176p_NonUI_J1AP_DVT/" target="_blank" rel="noopener" aria-label="Download 9B3176p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">9B3110u</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/5.1_9B3110u_NonUI_J2AP_DVT/" target="_blank" rel="noopener" aria-label="Download 9B3110u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">9B3176a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/5.1_9B3176a_NonUI_J2AP_MP/5.1_9B3176a_NonUI_J2AP_MP.tar.xz" target="_blank" rel="noopener" aria-label="Download 9B3176a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad 5</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J71sAP</span>
+                <span class="chip"><span class="key">SoC</span> S8000</span>
+              </div>
+            </div>
+            <span class="build-count">5 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">14E61810k</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/rl4AiKZQ#xd1t17l738fqEZ1_57PYm-SfG1HshOQuPe4DiP34iu4" target="_blank" rel="noopener" aria-label="Download 14E61810k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">14E61390h</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://archive.org/download/apple-ipad-5-erietianshan-14e61390h.-ipad-factoryos-switchboard-internal-filesys/iPad6%2C11_10.3_14E61390h_2026-04-13_1815_APFS_Live.zip" target="_blank" rel="noopener" aria-label="Download 14E61390h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">14E61810d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://archive.org/download/apple-ipad-5-erietianshan-14e61810d.-ipad-factoryos-switchboard-internal-filesys/iPad6%2C11_10.3_14E61810d_2026-04-14_1423_APFS_Live.zip" target="_blank" rel="noopener" aria-label="Download 14E61810d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">14F60900l</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/m0IQWCRL#Y1-ujB1gi43eiDSGdHaIExA4dc0G7chWbbQYp7S5jS8" target="_blank" rel="noopener" aria-label="Download 14F60900l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">14F60900i</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/10.3.2_14F60900i_NonUI_J72sAP_MP/" target="_blank" rel="noopener" aria-label="Download 14F60900i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Air 2</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J81AP, J82AP</span>
+                <span class="chip"><span class="key">SoC</span> T7001</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">18C50</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/12.1.1_16C50_InternalUI_J82AP_DVT/" target="_blank" rel="noopener" aria-label="Download 18C50"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Air 4</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J308AP, J307AP</span>
+                <span class="chip"><span class="key">SoC</span> T8101</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">18A13410u</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.0_18A13410u_NonUI_J307AP_FRB/" target="_blank" rel="noopener" aria-label="Download 18A13410u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">18A13412e</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/folder/fEcAnIgK#UDB_7ElqZf9cTjmIDv0Yqw" target="_blank" rel="noopener" aria-label="Download 18A13412e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad 6</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J71bAP</span>
+                <span class="chip"><span class="key">SoC</span> T8010</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">15E61120i</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/21hU2C7K#nnJgOz2KsApSXhFlmHZqZjRlVOqM9YQln3La57x0Tqg" target="_blank" rel="noopener" aria-label="Download 15E61120i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Pro 11 (1 Gen)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J317AP</span>
+                <span class="chip"><span class="key">SoC</span> T8027</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">16A63060n</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/hDVESQBR#zd6hNYXRDjWcVN-rshwR7SPwkkQmq8Q5wVfStOeU7zs" target="_blank" rel="noopener" aria-label="Download 16A63060n"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Pro 11 (2 Gen)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J417AP, J418AP</span>
+                <span class="chip"><span class="key">SoC</span> T8027</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">17G68</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/13.6_17G68_NonUI_J417AP_PRQ/" target="_blank" rel="noopener" aria-label="Download 17G68"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Pro 11 (3 Gen)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J517AP, J517xAP, J518AP, J518xAP</span>
+                <span class="chip"><span class="key">SoC</span> M1</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">18E61070r</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.5_18E61070r_NonUI_J517AP_AFB/" target="_blank" rel="noopener" aria-label="Download 18E61070r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Mini 6</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J310AP, J311AP</span>
+                <span class="chip"><span class="key">SoC</span> T8110</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">20A5348a</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/16.0_20A5348a_InternalUI_J310AP_DVT/" target="_blank" rel="noopener" aria-label="Download 20A5348a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Unreleased (5,5_5,6)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J98AP</span>
+                <span class="chip"><span class="key">SoC</span> T7001</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">12E21251a</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/kOdTEQBB#Xe9opgQ7nRoWtCbPGDVIwhAsYDyM3skv7ZGKhe5rvIE" target="_blank" rel="noopener" aria-label="Download 12E21251a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Pro (M1)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J517AP</span>
+                <span class="chip"><span class="key">SoC</span> M1</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">18E61070l</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/14.5_18E61070l_NonUI_J517AP_AFB/" target="_blank" rel="noopener" aria-label="Download 18E61070l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPad Air (M2)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J508AP, J507AP</span>
+                <span class="chip"><span class="key">SoC</span> M2</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">21E11251j</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/17.4_21E11251j_NonUI_J508AP_PVT/" target="_blank" rel="noopener" aria-label="Download 21E11251j"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= IPOD ================= -->
+    <section class="cat-section" id="ipod">
+      <h2 class="cat-title">iPod <span class="count">5 devices</span></h2>
+      <div class="device-grid">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPod Touch 2</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N72AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8720</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">7C101</span><span class="build-type nonui">NonUI</span></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPod Touch 4</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N81AP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8930</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">8B117</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/a8gS1AaL#WzqEypYV2yHYLD7QGU4om-R6YoJtdkwf_GjYESpdzq4" target="_blank" rel="noopener" aria-label="Download 8B117"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">10A13910b</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/6.0_10A13910b_NonUI_N81AP_PVT/SundanceJade10A13910b.iPodtouchFactoryOS.dmg" target="_blank" rel="noopener" aria-label="Download 10A13910b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPod Touch 5</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N78AP, N78aAP</span>
+                <span class="chip"><span class="key">SoC</span> S5L8942</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">10A219</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iOS/6.0_10A219_NonUI_N78AP_PROTO1/Sundance10A219.iPodtouchFactoryOS.dmg.gz" target="_blank" rel="noopener" aria-label="Download 10A219"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPod Touch 6</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N102AP</span>
+                <span class="chip"><span class="key">SoC</span> T7000</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">12H10570d</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/GxRWhL4J#FpxXV3aEFfh_A2Bs9N6UjvUwizo9ltfH1EAtH_S9TWU" target="_blank" rel="noopener" aria-label="Download 12H10570d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">iPod Touch 7</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N112AP</span>
+                <span class="chip"><span class="key">SoC</span> T7010</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">16F41260r</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://drive.google.com/file/d/1eT0WaAV01O29_dvqopcO3Cb73HtlA08P/view" target="_blank" rel="noopener" aria-label="Download 16F41260r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= WATCH ================= -->
+    <section class="cat-section" id="watch">
+      <h2 class="cat-title">Watch <span class="count">3 devices</span></h2>
+      <div class="device-grid">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">Apple Watch (1st gen)</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N27aAP</span>
+                <span class="chip"><span class="key">SoC</span> S7002</span>
+              </div>
+            </div>
+            <span class="build-count">3 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">12s34501f</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/atQDyZCC#_5fh2tzfQ8s8xT-N6P_lkWcQdN-try_5H2KAriBmTrA" target="_blank" rel="noopener" aria-label="Download 12s34501f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">13S709</span><span class="build-type demo">Demo (38mm)</span><span class="build-spacer"></span><a class="build-dl" href="https://drive.google.com/file/d/1IdvwYzQhPmiDWJrOvakzY0eQWIf8FVKi/view?usp=drive_link" target="_blank" rel="noopener" aria-label="Download 13S709"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">UNK</span><span class="build-type demo">Demo (42mm)</span><span class="build-spacer"></span><a class="build-dl" href="https://drive.google.com/file/d/1y4I9L4C34O9Wxm3jTVtp5eVkapjVAkzi/view?usp=drive_link" target="_blank" rel="noopener" aria-label="Download UNK"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">Apple Watch Series 1</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N27dAP</span>
+                <span class="chip"><span class="key">SoC</span> T8002</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">14S32871w</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://drive.usercontent.google.com/download?id=1cIMSivWVoZJVdQYRW_qE_Lj_phK76q0w&export=download" target="_blank" rel="noopener" aria-label="Download 14S32871w"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">Apple Watch Ultra 2</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> N210AP</span>
+                <span class="chip"><span class="key">SoC</span> T8310</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">21R41680z</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/watchOS/10.0_21R41680z_NonUI_N210AP/" target="_blank" rel="noopener" aria-label="Download 21R41680z"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">22R349</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/watchOS/11.0_22R349_InternalUI_N210AP/" target="_blank" rel="noopener" aria-label="Download 22R349"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= MACOS ================= -->
+    <section class="cat-section" id="macos">
+      <h2 class="cat-title">macOS <span class="count">6 devices</span></h2>
+      <div class="device-grid single">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS Sierra</h3>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">16F5049F</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://archive.org/download/PhoenixCE_a1708_16F5049f/Phoenix%20A1708.dmg" target="_blank" rel="noopener" aria-label="Download 16F5049F"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">16E195</span><span class="build-type unknown">TSBI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/bundles/macOS/Sierra_10.12.4_16E195_TSBI_v5.dmg" target="_blank" rel="noopener" aria-label="Download 16E195"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS High Sierra</h3>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">17G2091</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/10.13.6_17G2091_FactoryOS_MacPro6%2C1_Unknown-RemovedOSImages.dmg" target="_blank" rel="noopener" aria-label="Download 17G2091"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS Mojave</h3>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">18E41560o</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/bundles/macOS/J139_13_15_JazzF_v14_10.14.4_18E41560o_PhoenixCE.dmg" target="_blank" rel="noopener" aria-label="Download 18E41560o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS Big Sur DTK</h3>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">20A2261g</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/11.0_20A2261g_NonUI_J273a_PVT/20A2261g.tar.gz" target="_blank" rel="noopener" aria-label="Download 20A2261g"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">20A2314a</span><span class="build-type internal">Internal</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/11.0_20A2314a_InternalUI_J273_EVT/" target="_blank" rel="noopener" aria-label="Download 20A2314a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS Ventura MacBook M2 15in</h3>
+            </div>
+            <span class="build-count">4 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">22E11181e</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/13.3_22E11181e_NonUI_J415_EVT/" target="_blank" rel="noopener" aria-label="Download 22E11181e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">22E11940i</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/13.3_22E11940i_NonUI_J415_DVT/M2_Air_13.3_22E11940i_Root.tar.gz" target="_blank" rel="noopener" aria-label="Download 22E11940i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">22E11940k</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/13.3_22E11940k_NonUI_J415_DVT/" target="_blank" rel="noopener" aria-label="Download 22E11940k"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">22A33260o</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/13.0_22A33260o_NonUI_J414s_EVT/" target="_blank" rel="noopener" aria-label="Download 22A33260o"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">macOS Sonoma MacBook Pro 16in and 14in</h3>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">23A31761h</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/M3_Max_16in_Proto/M3_Max_14.0_23A3176h_Root.tar.gz" target="_blank" rel="noopener" aria-label="Download 23A31761h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">23A32391j</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/macOS/14.0_23A32391j_NonUI_J514c_EVT/" target="_blank" rel="noopener" aria-label="Download 23A32391j"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= T1/T2 ================= -->
+    <section class="cat-section" id="t2">
+      <h2 class="cat-title">T1 / T2 <span class="count">2 devices</span></h2>
+      <div class="device-grid single">
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">T1</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> UNK</span>
+                <span class="chip"><span class="key">SoC</span> UNK</span>
+              </div>
+            </div>
+            <span class="build-count">1 build</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">Factory Bundle</span><span class="build-type unknown">Bundle</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/iBridge1_1Factory.bundle.zip" target="_blank" rel="noopener" aria-label="Download T1 Factory Bundle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">T2</h3>
+              <div class="device-specs">
+                <span class="chip"><span class="key">BC</span> J140kAP</span>
+                <span class="chip"><span class="key">SoC</span> T8012</span>
+              </div>
+            </div>
+            <span class="build-count">2 builds</span>
+          </div>
+          <ul class="builds">
+            <li class="build"><span class="build-version">16P25070u</span><span class="build-type nonui">NonUI</span><span class="build-spacer"></span><a class="build-dl" href="https://mega.nz/file/foQixR4K#dAG7W3lqcnwvgPa4SYmnL-jTickoBVpwHdNlBIvyDU4" target="_blank" rel="noopener" aria-label="Download 16P25070u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li class="build"><span class="build-version">T2 PCIe-card</span><span class="build-type unknown">Card</span><span class="build-spacer"></span><a class="build-dl" href="https://applintrnl.app/dumps/T2-PCIe-card/" target="_blank" rel="noopener" aria-label="Download T2 PCIe-card"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ================= HORIZON ================= -->
+    <section class="cat-section" id="horizon">
+      <h2 class="cat-title">Horizon</h2>
+      <div class="device-grid single">
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">Horizon Builds</h3>
+            </div>
+            <span class="build-count">12 builds</span>
+          </div>
+          <ul class="other-list">
+            <li><span class="other-label"><span class="build-version">EmetSkyline 15H2217d</span></span><a class="build-dl" href="https://mega.nz/file/WkBVmRBK#z9EoT1maKpLTfZOJIVsA_Ih1b50qvrF-fF3avvbQt3w" target="_blank" rel="noopener" aria-label="Download EmetSkyline 15H2217d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">PeaceSkyline 16S4366t</span></span><a class="build-dl" href="https://mega.nz/file/Tc0zAATD#NZ3NatsbHzE85U-9CNworGjFn0D0ZSw021Ih5-our-s" target="_blank" rel="noopener" aria-label="Download PeaceSkyline 16S4366t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">YukonEHWSkyline 17S42550e</span></span><a class="build-dl" href="https://mega.nz/file/bhYyCYzB#X7yCaY1ItWdrpObfA94KK4Gt2VAmxkRN7lQgef0zwzA" target="_blank" rel="noopener" aria-label="Download YukonEHWSkyline 17S42550e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">AzulSkyline 18S43370i</span></span><a class="build-dl" href="https://mega.nz/file/q5hTSIRC#4UiygGK8lJQLYSEFWmjdNDvZaJHSfCUiQqBulnTe9T4" target="_blank" rel="noopener" aria-label="Download AzulSkyline 18S43370i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">SkySkylineTwo 19S64040f</span></span><a class="build-dl" href="https://drive.google.com/file/d/1TlFdjAIRiLQsdEP8jIxgvqrSKQXfwLUw/view?usp=drive_link" target="_blank" rel="noopener" aria-label="Download SkySkylineTwo 19S64040f"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">SydneySkyline 20S63580d</span></span><a class="build-dl" href="https://mega.nz/file/k8JBnBDR#wNnQm8qe6DQKMsrMfvO6nZzYh-Uz0ywP6kc9jKtBq6U" target="_blank" rel="noopener" aria-label="Download SydneySkyline 20S63580d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">SydneySkyline 20S63580j</span></span></li>
+            <li><span class="other-label"><span class="build-version">SydneySkyline 20S63580k</span></span></li>
+            <li><span class="other-label"><span class="build-version">DawnSkyline 21S63260c</span></span></li>
+            <li><span class="other-label"><span class="build-version">DawnSkyline 21S63260j</span></span></li>
+            <li><span class="other-label"><span class="build-version">CrystalSkyline 22S63470d</span></span></li>
+            <li><span class="other-label"><span class="build-version">LuckSkyline 23S63281c</span></span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= OTHER ================= -->
+    <section class="cat-section" id="other">
+      <h2 class="cat-title">Other</h2>
+      <div class="device-grid single">
+        <article class="device">
+          <div class="device-head">
+            <div>
+              <h3 class="device-name">Miscellaneous</h3>
+            </div>
+            <span class="build-count">9 items</span>
+          </div>
+          <ul class="other-list">
+            <li><span class="other-label"><span class="build-version">1A420</span> NonUI tar.bz2</span><a class="build-dl" href="https://mega.nz/file/zA1kQBrD#8R1W4CIOs0b2KGVfCYFKpijXRZJzCkeVowsSJpdy4n4" target="_blank" rel="noopener" aria-label="Download 1A420"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">iPad Mini 2 11D167</span> OQC</span><a class="build-dl" href="https://mega.nz/file/XFUlEQYS#PyZzX_Jetv6lT5GuLKCaJe66wot1Z0ERJSmW_32mZvA" target="_blank" rel="noopener" aria-label="Download iPad Mini 2 11D167"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">iPad Mini 2 12D508d</span> Apple Watch demo f5 iOS 8.2</span><a class="build-dl" href="https://mega.nz/file/e45HzYBL#dlFLq8Cwx4z6I0ddDeqqmnqnEAm2ZrIqmvOpg1-MqNM" target="_blank" rel="noopener" aria-label="Download iPad Mini 2 12D508d"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">iPad Mini 2 13A404</span> Apple Watch demo f5 iOS 9.0.1</span><a class="build-dl" href="https://mega.nz/file/zx5jGJgT#rKQzFRRh3S-l2Vlhmcb6raI3rSqP0Ur2V4HMt_xRx8Y" target="_blank" rel="noopener" aria-label="Download iPad Mini 2 13A404"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">iPad Mini 2 13F69</span> Apple Watch demo f5 iOS 9.3.2</span><a class="build-dl" href="https://mega.nz/file/atAyjJQY#wD4Ase0r5W9kFLWp6LtiHBAFcxR5rXbSv-pgTQUe6z0" target="_blank" rel="noopener" aria-label="Download iPad Mini 2 13F69"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">iPhone 4</span> Phoenix FullInternal</span><a class="build-dl" href="https://applintrnl.app/bundles/iOS/iPhone4_4.0-4.2.5_PhoenixBundles_FullInternal/" target="_blank" rel="noopener" aria-label="Download iPhone 4 Phoenix FullInternal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">7D11</span> Full internal build</span><a class="build-dl" href="https://drive.google.com/file/d/1-U-n1UV8aJfECxgIZgusfJpfIuHvp5ti/view?usp=sharing" target="_blank" rel="noopener" aria-label="Download 7D11"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">HomePod 1 15D40260u</span> NonUI</span><a class="build-dl" href="https://nicsfix.com/ipsw/ProtoPod.zip" target="_blank" rel="noopener" aria-label="Download HomePod 1 15D40260u"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+            <li><span class="other-label"><span class="build-version">BridgeOS 15P665380m</span> NonUI</span><a class="build-dl" href="https://applintrnl.app/bundles/bridgeOS/BridgeOS_2.4_15P665380m_NonUI_J132_Restore/FDbridgeOSLoboCobra15P665380m_J132.zip" target="_blank" rel="noopener" aria-label="Download BridgeOS 15P665380m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p>Internal Firmwares — Heliotrope. Big thanks to Stonneph, Someyoshino, Dosdude, Orangerain, plx.</p>
+    <p><a href="../index.html">Back to archive</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
