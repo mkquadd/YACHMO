@@ -11,27 +11,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Точные цвета с твоего скриншота */
-      --bg-color: #0b0211; 
-      
-      --card-bg: #13081f; 
-      --card-border: #25113b; 
-      
-      --card-bg-hover: #190b29;
-      --card-border-hover: #3c1c5c;
-      
-      --icon-bg: #1c0c2e;
-      --icon-border: #30154f;
+      --bg-color: #0b0211;
+
+      /* ↓ Карточка стала темнее */
+      --card-bg: #170a26;
+      --card-border: #2f1550;
+
+      --card-bg-hover: #2a1647;
+      --card-border-hover: #4a2675;
+
+      /* ↓ Иконка вернулась — чуть светлее карточки */
+      --icon-bg: #2a1749;
+      --icon-border: #3e1f67;
 
       --text: #ffffff;
       --text-2: #cdc3dc;
-      --muted: #9a8fb0; 
+      --muted: #9a8fb0;
       --muted-2: #6e6486;
-      
+
       --purple: #a855f7;
       --purple-light: #d8b4fe;
       --purple-bright: #e9d5ff;
-      
+
       --radius: 20px;
       --radius-lg: 22px;
     }
@@ -59,11 +60,10 @@
     }
 
     a { color: inherit; text-decoration: none; }
-    
-    /* Глобально убираем любые свечения, рамки и изменения при клике */
-    button, a { 
-      font: inherit; 
-      color: inherit; 
+
+    button, a {
+      font: inherit;
+      color: inherit;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
       outline: none;
@@ -72,6 +72,19 @@
       outline: none !important;
       box-shadow: none !important;
     }
+
+    /* ============ PAGE LOAD ANIMATION ============ */
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    .nav-wrap { animation: fadeIn .5s ease both; }
+    main      { animation: riseIn .85s cubic-bezier(.22,.9,.28,1) .05s both; }
+    footer    { animation: riseIn .85s cubic-bezier(.22,.9,.28,1) .18s both; }
 
     /* ============ NAV ============ */
     .nav-wrap {
@@ -92,7 +105,7 @@
       height: 52px;
       padding: 0 6px 0 16px;
       border-radius: 16px;
-      background: rgba(19, 8, 31, 0.8);
+      background: rgba(23, 10, 38, 0.82);
       backdrop-filter: blur(28px) saturate(180%);
       -webkit-backdrop-filter: blur(28px) saturate(180%);
       border: 1px solid var(--card-border);
@@ -136,12 +149,11 @@
       color: var(--muted);
       border-radius: 9px;
       font-weight: 500;
-      transition: color .15s ease, background .15s ease;
+      transition: color .15s ease;
       letter-spacing: -.005em;
     }
     .nav-links a:hover, .nav-links button:hover {
       color: var(--text);
-      background: var(--card-bg-hover);
     }
     .nav-cta {
       background: var(--card-bg) !important;
@@ -149,7 +161,6 @@
       border: 1px solid var(--card-border) !important;
     }
     .nav-cta:hover {
-      background: var(--card-bg-hover) !important;
       border-color: var(--card-border-hover) !important;
     }
 
@@ -181,7 +192,6 @@
     }
     .hero-sub strong { color: var(--text-2); font-weight: 500; }
 
-    /* ==== КНОПКИ ==== */
     .hero-actions {
       display: flex;
       justify-content: center;
@@ -202,16 +212,16 @@
       font-weight: 500;
       letter-spacing: -.005em;
       border: 1px solid transparent;
-      transition: background .15s ease, border-color .15s ease, color .15s ease;
+      transition: border-color .15s ease;
     }
     .btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-    
+
+    /* ↓ Без смены цвета на hover */
     .btn-primary {
-      background: #c77dff;      /* светлый цвет по умолчанию */
+      background: #d49cff;
       color: #ffffff;
       font-weight: 600;
     }
-    .btn-primary:hover { background: #b45cff; }  /* чуть темнее при наведении */
 
     .btn-secondary {
       background: var(--card-bg);
@@ -219,7 +229,6 @@
       border-color: var(--card-border);
     }
     .btn-secondary:hover {
-      background: var(--card-bg-hover);
       border-color: var(--card-border-hover);
     }
 
@@ -270,7 +279,7 @@
       letter-spacing: -.005em;
     }
 
-    /* ============ BENTO (Library tiles) ============ */
+    /* ============ BENTO ============ */
     .bento {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -288,20 +297,21 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       overflow: hidden;
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      transition: transform .2s ease, border-color .2s ease;
     }
-    
     .tile:hover {
       transform: translateY(-2px);
       border-color: var(--card-border-hover);
-      background: var(--card-bg-hover);
     }
-
-    /* Отключаем любые изменения при клике */
+    /* Нажатие: только подъём, без цвета */
     .tile:active {
-      transform: translateY(-2px);
-      border-color: var(--card-border-hover);
-      background: var(--card-bg-hover);
+      transform: translateY(-4px);
+    }
+    .tile:active .tile-icon {
+      transform: rotate(-12deg) scale(.9);
+    }
+    .tile:active .tile-arrow {
+      transform: rotate(-10deg) scale(.92);
     }
 
     .tile.featured {
@@ -323,6 +333,8 @@
       border: 1px solid var(--icon-border);
       color: var(--purple-light);
       margin-bottom: 24px;
+      transform-origin: center;
+      transition: transform .2s ease;
     }
     .tile-icon svg { width: 22px; height: 22px; stroke-width: 1.6; }
     .tile-title {
@@ -351,11 +363,11 @@
       color: var(--purple-light);
       background: var(--icon-bg);
       border: 1px solid var(--icon-border);
-      transition: color .2s ease, background .2s ease, border-color .2s ease;
+      transform-origin: center;
+      transition: color .2s ease, border-color .2s ease, transform .2s ease;
     }
     .tile:hover .tile-arrow {
       color: #ffffff;
-      background: var(--card-border-hover);
       border-color: var(--purple);
     }
 
@@ -375,12 +387,14 @@
       border-radius: var(--radius);
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      transition: transform .2s ease, border-color .2s ease;
     }
-    .latest-card:hover, .latest-card:active {
+    .latest-card:hover {
       transform: translateY(-2px);
       border-color: var(--card-border-hover);
-      background: var(--card-bg-hover);
+    }
+    .latest-card:active {
+      transform: translateY(-4px);
     }
     .latest-date {
       display: inline-flex;
@@ -428,12 +442,17 @@
       border-radius: var(--radius-lg);
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      transition: transform .2s ease, border-color .2s ease, background .2s ease;
+      transition: transform .2s ease, border-color .2s ease;
     }
-    .person:hover, .person:active {
+    .person:hover {
       transform: translateY(-2px);
       border-color: var(--card-border-hover);
-      background: var(--card-bg-hover);
+    }
+    .person:active {
+      transform: translateY(-4px);
+    }
+    .person:active .avatar {
+      transform: rotate(-8deg) scale(.95);
     }
     .avatar {
       position: relative;
@@ -449,6 +468,8 @@
       color: #1a0518;
       background: linear-gradient(145deg, #f3e8ff 0%, #d8b4fe 50%, #a855f7 100%);
       box-shadow: 0 0 0 1px rgba(192,132,252,.25);
+      transform-origin: center;
+      transition: transform .2s ease;
     }
     .avatar.alt {
       background: linear-gradient(145deg, #f5f3ff 0%, #c4b5fd 50%, #8b5cf6 100%);
@@ -548,7 +569,7 @@
       display: grid;
       place-items: center;
       padding: 20px;
-      background: rgba(11, 2, 17, .75); 
+      background: rgba(11, 2, 17, .75);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
       opacity: 0;
@@ -580,9 +601,9 @@
       line-height: 1;
       display: grid;
       place-items: center;
-      transition: background .15s ease, color .15s ease;
+      transition: color .15s ease, border-color .15s ease;
     }
-    .modal-close:hover { background: var(--card-border-hover); color: var(--text); }
+    .modal-close:hover { color: var(--text); border-color: var(--card-border-hover); }
     .modal-icon {
       width: 48px; height: 48px;
       border-radius: 13px;
@@ -636,6 +657,7 @@
       html { scroll-behavior: auto; }
       *, *::before, *::after {
         animation-duration: .01ms !important;
+        animation-delay: 0s !important;
         transition-duration: .01ms !important;
       }
     }
